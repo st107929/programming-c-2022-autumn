@@ -3,7 +3,7 @@
 int main(int argc, char* argv[])
 {
 	int n = 0;
-	float res = 0;
+	double res = 0;
 	std::cin >> n;
 	for (int i = 0; i <= n; ++i)
 	{
