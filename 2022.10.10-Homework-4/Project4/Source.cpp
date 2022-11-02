@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 	{
 		float fraction = 0;
 		fraction = 1.0 * (a * x * x * x + b * x * x + c * x + d) / (x - e);
-		if ((x != e)&&(fraction ==0.0))
+		if ((x != e) && (fraction == 0.0))
 		{
 			++number_of_solutions;
 		}

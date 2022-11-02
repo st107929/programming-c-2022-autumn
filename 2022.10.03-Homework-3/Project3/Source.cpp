@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 		} while (a <= n - 1);
 		std::cout << n + delta << std::endl;
 		a = 1;
-				delta++;
+		delta++;
 	} while (delta <= n - 1);
 	return EXIT_SUCCESS;
 }
