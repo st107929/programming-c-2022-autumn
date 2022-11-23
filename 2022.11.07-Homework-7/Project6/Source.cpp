@@ -59,5 +59,15 @@ int main(int argc, char* argv[])
 		delete[] a[i];
 	}
 	delete[] a;
+	for (int i = 0; i < n; ++i)
+	{
+		delete[] b[i];
+	}
+	delete[] b;
+	for (int i = 0; i < n; ++i)
+	{
+		delete[] sum[i];
+	}
+	delete[] sum;
 	return EXIT_SUCCESS;
 }
