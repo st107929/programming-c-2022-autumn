@@ -1,28 +1,33 @@
 #include<iostream>
 
-int** spiral(int n);
+int** spiral(int** a, int n);
 int main(int argc, char* argv[])
 {
 	int n = 0;
 	std::cin >> n;
-	for (int i = 0; i < n; ++i)
-	{
-		for (int j = 0; j < n; ++j)
-		{
-			std::cout << spiral(n)[i][j] << " ";
-		}
-		std::cout << std::endl;
-	}
-	return EXIT_SUCCESS;
-}
-int** spiral(int n)
-{
 	int** a = nullptr;
 	a = new int* [n] { 0 };
 	for (int i = 0; i < n; ++i)
 	{
 		a[i] = new int [n] { 0 };
 	}
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			std::cout << spiral(a, n)[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
+	for (int i = 0; i < n; ++i)
+	{
+		delete[]a[i];
+	}
+	delete[]a;
+	return EXIT_SUCCESS;
+}
+int** spiral(int** a, int n)
+{
 	if (n == 1)
 	{
 		a[0][0] = 1;
@@ -60,7 +65,18 @@ int** spiral(int n)
 							}
 							else
 							{
-								a[i][j] = (4 * n - 4) + spiral(n - 2)[i - 1][j - 1];
+								int** b = nullptr;
+								b = new int* [n - 2] { 0 };
+								for (int i = 0; i < n - 2; ++i)
+								{
+									b[i] = new int[n - 2] { 0 };
+								}
+								a[i][j] = (4 * n - 4) + spiral(b, n - 2)[i - 1][j - 1];
+								for (int i = 0; i < n - 2; ++i)
+								{
+									delete[]b[i];
+								}
+								delete[]b;
 							}
 						}
 					}
@@ -69,9 +85,4 @@ int** spiral(int n)
 		}
 	}
 	return a;
-	for (int i = 0; i < n; ++i)
-	{
-		delete[] a[i];
-	}
-	delete[]a;
 }
