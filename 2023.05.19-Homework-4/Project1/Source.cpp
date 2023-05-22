@@ -156,6 +156,24 @@ private:
 		return 1 + CountElems(node->left) + CountElems(node->right);
 	}
 
+	void Balancing(Node*& node)
+	{
+		if ((Depth(node->left) - Depth(node->right) == -1) || ((Depth(node->left) - Depth(node->right) == 0)) || ((Depth(node->left) - Depth(node->right) == 1)))
+		{
+			return;
+		}
+		else if (Depth(node->left) > Depth(node->right))
+		{
+			return RotateRight(node);
+		}
+		else if (Depth(node->left) < Depth(node->right))
+		{
+			return RotateLeft(node);
+		}
+		Balancing(node->left);
+		Balancing(node->right);
+	}
+
 public:
 	BTree() : root(nullptr) {}
 
@@ -188,7 +206,7 @@ public:
 		}
 		if (left)
 		{
-			RotateLeft(node);
+			RotateLeft(node);																				
 		}
 		else
 		{
@@ -199,6 +217,16 @@ public:
 	int Depth()
 	{
 		return Depth(root);
+	}
+
+	int Hight(int data)
+	{
+		Node* node = GetNode(root, data);
+		return Depth(node);
+	}
+	void Ballancing()
+	{
+		return Balancing(root);
 	}
 
 	friend std::ostream& operator<<(std::ostream& stream, BTree& tree)
@@ -220,27 +248,17 @@ public:
 int main(int argc, char* argv[])
 {
 	BTree tree;
-	tree.Add(8);
-	tree.Add(4);
-	tree.Add(12);
-	tree.Add(2);
-	tree.Add(6);
-	tree.Add(10);
-	tree.Add(14);
-	tree.Add(1);
-	tree.Add(3);
 	tree.Add(5);
-	tree.Add(7);
-	tree.Add(9);
-	tree.Add(11);
-	tree.Add(13);
-	tree.Add(15);
+	tree.Add(6);
+	tree.Add(3);
+	tree.Add(2);
+	tree.Add(1);
+
+
+	
 	std::cout << tree << std::endl;
-	tree.Rotate(8, true);
-	tree.Rotate(8, false);
+	tree.Ballancing();
 	std::cout << tree << std::endl;
-	tree.Rotate(4, true);
-	tree.Rotate(12, false);
-	std::cout << tree << std::endl;
+	
 	return EXIT_SUCCESS;
 }
