@@ -1,178 +1,165 @@
-#include <iostream>
+#include<iostream>
+#define m 239
 
-class Mod239
+class Module
 {
 public:
-	int cl;
+	int data;
 
-	Mod239(int cl = 0) : cl(cl % 239) {}
-	~Mod239() {}
-
-	int mod(int cl)
+	Module()
 	{
-		while (cl < 0)
+		this->data = 0;
+	}
+	Module(int a)
+	{
+		this->data = a % m;
+	}
+	~Module() {}
+	static int mod(int a)
+	{
+		while (a < 0)
 		{
-			cl += 239;
+			a += m;
 		}
-		return cl % 239;
+		return a % m;
 	}
-	int inversed(int cl)
+	Module(const Module& B)
 	{
-		if (cl == 0) { return -1; }
-		if (cl == 1) { return 0; }
-		int i = 2;
-		while ((cl * i) % 239 != 1) ++i;
-		return i;
+		this->data = B.data;
 	}
-
-	Mod239 operator+= (Mod239 num)
+	static Module reverse(int data)
 	{
-		cl = mod(cl + num.cl);
-		return *this;
-	}
-	Mod239 operator-= (Mod239 num)
-	{
-		cl = mod(cl - num.cl);
-		return *this;
-	}
-	Mod239 operator*= (Mod239 num)
-	{
-		cl = mod(cl * num.cl);
-		return *this;
-	}
-	Mod239 operator/= (Mod239 num)
-	{
-		if (num.cl != 0) cl = mod(cl * inversed(num.cl));
-		else cl = -1;
-		return *this;
-	}
-	Mod239 operator%= (Mod239 num)
-	{
-		if (num.cl != 0) cl = mod(cl % num.cl);
-		else cl = -1;
-		return *this;
-	}
-
-	Mod239 operator=(const Mod239& c)
-	{
-		return Mod239(c.cl % 239);
-	};
-	bool operator == (const Mod239& c) const
-	{
-		return cl == c.cl;
-	}
-	bool operator != (const Mod239& c) const
-	{
-		return cl != c.cl;
-	}
-	bool operator > (const Mod239& c) const
-	{
-		return cl > c.cl;
-	}
-	bool operator < (const Mod239& c) const
-	{
-		return cl < c.cl;
-	}
-	bool operator >= (const Mod239& c) const
-	{
-		return cl >= c.cl;
-	}
-	bool operator <= (const Mod239& c) const
-	{
-		return cl <= c.cl;
-	}
-
-	unsigned powmod(unsigned base, unsigned exp, unsigned modulo)
-	{
-		unsigned res = 1;
-
-		while (exp != 0)
+		if (data != 0)
 		{
-			if ((exp & 1) != 0)
+			for (int i = 0; i < m; ++i)
 			{
-				res = (1ll * res * base) % modulo;
+				if (mod(data * i) == 1)
+					return Module(i);
 			}
-
-			base = (1ll * base * base) % modulo;
-			exp >>= 1;
 		}
-
-		return res;
 	}
-
-	friend std::ostream& operator<<(std::ostream& stream, const Mod239& c);
-	friend std::istream& operator >> (std::istream& in, Mod239& num);
-
-	friend Mod239 operator+ (Mod239 num, Mod239 num2);
-	friend Mod239 operator- (Mod239 num, Mod239 num2);
-	friend Mod239 operator* (Mod239 num, Mod239 num2);
-	friend Mod239 operator/ (Mod239 num, Mod239 num2);
-};
-
-std::ostream& operator<<(std::ostream& stream, const Mod239& c)
-{
-	stream << c.cl << "(239)";
-	return stream;
-};
-
-std::istream& operator >> (std::istream& in, Mod239& num)
-{
-	int cl;
-	in >> cl;
-	num.cl = cl % 239;
-	return in;
-}
-
-
-Mod239 operator+ (Mod239 num, Mod239 num2)
-{
-	Mod239 k = num.cl + num2.cl;
-	return k.mod(k.cl);
-}
-Mod239 operator- (Mod239 num, Mod239 num2)
-{
-	Mod239 k = num.cl - num2.cl;
-	return k.mod(k.cl);
-
-}
-Mod239 operator* (Mod239 num, Mod239 num2)
-{
-	Mod239 k = num.cl * num2.cl;
-	return k.mod(k.cl);
-}
-Mod239 operator/ (Mod239 num, Mod239 num2)
-{
-	if (num.cl != 0)
+	Module operator+=(const Module& C)
 	{
-		Mod239 k = num2.inversed(num2.cl) * num.cl;
-		return k.mod(k.cl);
+		this->data += C.data;
+		return *this;
+	}
+	Module operator-=(const Module& C)
+	{
+		this->data -= C.data;
+		return *this;
+	}
+	Module operator*=(const Module& C)
+	{
+		this->data *= C.data;
+		return *this;
+	}
+	Module operator/=(const Module& C)
+	{
+		if (C.data != 0)
+		{
+			Module rev = reverse(C.data);
+			*this *= rev;
+			return *this;
+		}
+	}
+	Module operator%=(const int a)
+	{
+		this->data = mod(this->data) % a;
+		return *this;
+	}
+	friend Module operator+(const Module& a, const Module& b);
+	friend Module operator-(const Module& a, const Module& b);
+	friend Module operator*(const Module& a, const Module& b);
+	friend Module operator/(const Module& a, const Module& b);
+	friend Module bin_pow(Module a, const int b);
+
+	bool operator>(const Module b)
+	{
+		return (mod(this->data) > mod(b.data));
+	}
+	bool operator<(const Module b)
+	{
+		return (mod(this->data) < mod(b.data));
+	}
+	bool operator==(const Module b)
+	{
+		return (mod(this->data) == mod(b.data));
+	}
+	bool operator!=(const Module b)
+	{
+		return (mod(this->data) != mod(b.data));
+	}
+	bool operator>=(const Module b)
+	{
+		return (mod(this->data) >= mod(b.data));
+	}
+	bool operator<=(const Module b)
+	{
+		return (mod(this->data) <= mod(b.data));
+	}
+	friend std::ostream& operator<<(std::ostream& st, Module a);
+	friend std::istream& operator>>(std::istream& st, Module& a);
+};
+Module operator+(const Module& a, const Module& b)
+{
+	return Module(a.data + b.data);
+}
+Module operator-(const Module& a, const Module& b)
+{
+	return Module(a.data - b.data);
+}
+Module operator*(const Module& a, const Module& b)
+{
+	return Module(a.data * b.data);
+}
+Module operator/(const Module& a, const Module& b)
+{
+	if (b.data != 0)
+	{
+		Module rev = Module::reverse(b.data);
+		return a * rev;
 	}
 }
-
+std::ostream& operator<<(std::ostream& st, Module a)
+{
+	return st << a.mod(a.data);
+}
+std::istream& operator>>(std::istream& st, Module& a)
+{
+	int b;
+	st >> b;
+	a.data = a.mod(b);
+	return st;
+}
+Module bin_pow(Module a, const int b)
+{
+	if (b == 0)
+	{
+		return 1;
+	}
+	if (b > 0)
+	{
+		if (b % 2)
+		{
+			return a * bin_pow(a, b - 1);
+		}
+		else
+		{
+			return bin_pow(a * a, b / 2);
+		}
+	}
+	else
+	{
+		return bin_pow(Module::reverse(a.data), -b);
+	}
+}
 int main(int argc, char* argv[])
 {
-	Mod239 a;
-	Mod239 b = 14;
-	std::cin >> a;
-	std::cout << a << std::endl;
-	std::cout << a - 500 << std::endl;
-	std::cout << a + 100 << std::endl;
-	std::cout << a * 56 << std::endl;
-	std::cout << a / 12 << std::endl; //a * 20
-	a += 1;
-	std::cout << a << std::endl;
-	a -= 9;
-	std::cout << a << std::endl;
-	a *= 100;
-	std::cout << a << std::endl;
-	a /= 10;
-	std::cout << a << std::endl;
-	std::cout << "a == 0 - " << (a == 0) << std::endl;
-	std::cout << "a >= 0 - " << (a >= 0) << std::endl;
-	std::cout << "a <= 0 - " << (a <= 0) << std::endl;
-	std::cout << "a != 0 - " << (a != 0) << std::endl;
-	std::cout << "a > 0 - " << (a > 0) << std::endl;
-	std::cout << "a < 0 - " << (a < 0) << std::endl;
-	std::cout << a.powmod((unsigned)(a.cl), 238, 239);
+	Module a(18);
+	Module b(-65);
+	Module c(5);
+	std::cout << Module::reverse(a.data) << std::endl;
+	std::cout << c + a / b << std::endl;
+	std::cout << bin_pow(a, -3) << std::endl;
 	return EXIT_SUCCESS;
 }

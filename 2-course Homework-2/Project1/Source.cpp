@@ -1,24 +1,24 @@
 #include <iostream>
 
-class BP
+class A
 {
 public:
-	virtual int f1() { return 2; }
-	virtual void f2() { std::cout << "parent function" << std::endl; }
-	virtual char f3() { return 'p'; }
+	virtual int f1() { return 0; }
+	virtual void f2() { }
+	virtual char f3() { return '0'; }
 };
-class B : public BP
+class B : public A
 {
 private:
-	int f1() { std::cout << '1' << std::endl; return 1; }
+	int f1() { return 1; }
 	void f2() { std::cout << "f2" << std::endl; }
-	char f3() { std::cout << "aaa" << std::endl; return 'a'; }
+	char f3() { return 'a'; }
 };
 
 int main(int argc, char* argv[])
 {
 	B b;
-	BP* b2 = &b;
+	A* b2 = &b;
 	b2->f1();
 	b2->f2();
 	b2->f3();

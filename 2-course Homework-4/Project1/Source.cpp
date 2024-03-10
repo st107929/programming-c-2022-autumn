@@ -1,163 +1,146 @@
-#include <iostream>
-#include <fstream>
-#include <thread>
+#include<iostream>
 
 template <typename T>
-
-class List
+class RingList
 {
-private:
-    struct  Node
-    {
-        T data;
-        Node* next;
-    };
+	struct Node
+	{
+		T data;
+		Node* next;
+	};
 
-    Node* head;
-    Node* tail;
-    int size;
+	Node* head;
+	Node* tail;
+
 public:
-    List() :head(NULL), tail(NULL), size(0) {};
-    ~List()
-    {
-        while (size != 0)
-        {
-            Node* temp = head;
-            head = head->next;
-            delete temp;
-            size--;
-        }
-    }
-
-    int Count()
-    {
-        return size;
-    }
-
-    void Insert(T x)
-    {
-        size++;
-        Node* temp = new Node;
-        temp->next = head;
-        temp->data = x;
-        if (head != NULL)
-        {
-            tail->next = temp;
-            tail = temp;
-        }
-        else head = tail = temp;
-    }
-
-    T& operator[](int index)
-    {
-        index %= size;
-        Node* current = head;
-        for (int i = 0; i < index && current != nullptr; i++)
-            current = current->next;
-        return current->data;
-    }
-
-    void RemoveNode(int index)
-    {
-        index %= size;
-        if (head == nullptr)
-        {
-            return;
-        }
-
-        Node* current = head;
-
-        if (current->next == head && index == 0)
-        {
-            head = nullptr;
-            delete current;
-            size--;
-            return;
-        }
-
-        if (index == 0)
-        {
-            Node* temp = head;
-            head = head->next;
-            tail->next = head;
-            delete temp;
-            size--;
-        }
-        else
-        {
-            int count = 0;
-            while (count != index - 1)
-            {
-                current = current->next;
-                count++;
-            }
-            Node* temp = current->next;
-            current->next = current->next->next;
-            delete temp;
-            size--;
-        }
-    }
-
-    void Print()
-    {
-        Node* tmph;
-        tmph = head;
-        int temp = size;
-        while (temp != 0)
-        {
-            std::cout << tmph->data << " ";
-            tmph = tmph->next;
-            temp--;
-        }
-    }
+	RingList() :head(nullptr), tail(nullptr) {};
+	~RingList()
+	{
+		if (this->len() != 0)
+		{
+			while (this->len() != 1)
+			{
+				Node* temp = new Node;
+				temp = head;
+				head = head->next;
+				tail->next = head;
+				delete temp;
+			}
+			delete head;
+		}
+	}
+	int len()
+	{
+		if (head == nullptr)
+			return 0;
+		else
+		{
+			int res = 1;
+			Node* temp = new Node;
+			temp = head;
+			while (temp->next != head)
+			{
+				temp = temp->next;
+				++res;
+			}
+			return res;
+		}
+	}
+	void Insert(T dat)
+	{
+		if (this->len() != 0)
+		{
+			Node* n = new Node;
+			n->data = dat;
+			n->next = head;
+			head = n;
+			tail->next = n;
+		}
+		else
+		{
+			Node* n = new Node;
+			n->data = dat;
+			n->next = n;
+			head = n;
+			tail = n;
+		}
+	}
+	T& operator[](int ind)
+	{
+		ind %= (this->len());
+		Node* temp = new Node;
+		temp = this->head;
+		for (int i = 0; i < ind; ++i)
+		{
+			temp = temp->next;
+		}
+		return temp->data;
+	}
+	void Remove(int ind)
+	{
+		ind %= this->len();
+		if (head == nullptr)
+		{
+			return;
+		}
+		if ((ind == 0) && (head->next == head))
+		{
+			Node* temp = new Node;
+			temp = head;
+			head = nullptr;
+			delete temp;
+			tail = nullptr;
+			return;
+		}
+		if (ind == 0)
+		{
+			Node* temp = head;
+			head = head->next;
+			delete temp;
+			tail->next = head;
+			return;
+		}
+		if (ind == this->len() - 1)
+		{
+			Node* temp1 = new Node;
+			Node* temp2 = new Node;
+			temp1 = tail;
+			temp2 = tail;
+			for (int i = 0; i < this->len() - 1; ++i)
+			{
+				temp2 = temp2->next;
+			}
+			tail = temp2;
+			delete temp1;
+			tail->next = head;
+			return;
+		}
+		else
+		{
+			Node* temp1 = new Node;
+			Node* temp2 = new Node;
+			temp1 = head;
+			for (int i = 0; i < ind - 1; ++i)
+			{
+				temp1 = temp1->next;
+			}
+			temp2 = temp1->next;
+			temp1->next = temp2->next;
+			delete temp2;
+		}
+	}
 };
-
-void test1()
+int main(int argc, char* argv[])
 {
-    List<int> list1;
-    list1.Insert(100);
-    list1.Insert(200);
-    list1.Insert(300);
-    std::cout << "int" << std::endl;
-    std::cout << list1.Count() << std::endl;
-    std::cout << list1[0] << std::endl;
-    list1.RemoveNode(0);
-    list1.Print();
-    std::cout << std::endl << std::endl;
-}
+	RingList<int> b;
 
-void test2()
-{
-    List<char> list2;
-    list2.Insert('a');
-    list2.Insert('b');
-    list2.Insert('c');
-    std::cout << "char" << std::endl;
-    std::cout << list2.Count() << std::endl;
-    std::cout << list2[0] << std::endl;
-    list2.RemoveNode(0);
-    list2.Print();
-    std::cout << std::endl << std::endl;
-}
+	b.Insert(100);
+	b.Insert(200);
+	b.Insert(300);
+	std::cout << b[2] << std::endl;
+	b.Remove(1);
+	std::cout << b.len() << std::endl;
+	std::cout << b[1] << std::endl;
 
-void test3()
-{
-    List<double> list3;
-    list3.Insert(0.2);
-    list3.Insert(7.1);
-    list3.Insert(3.3);
-    std::cout << "double" << std::endl;
-    std::cout << list3.Count() << std::endl;
-    std::cout << list3[0] << std::endl;
-    list3.RemoveNode(0);
-    list3.Print();
-    std::cout << std::endl;
-}
-
-int main()
-{
-    test1();
-    test2();
-    test3();
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
